@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Productos</title>
+  <style>
+     .product-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px;
+      width: 300px;
+      display: inline-block;
+    }
+    .product-card img {
+      max-width: 100%;
+      max-height: 200px;
+    }
+  </style>
+</head>
+<body>
+<body>
+ {{#if user}}
+    <h2>Bienvenido, {{user.first_name}} {{user.last_name}}!</h2>
+    <p>Email: {{user.email}}</p>
+    <p>Rol: {{user.role}}</p>
+    <!-- Formulario de logout -->
+    <form action="/logout" method="post">
+      <button type="submit">Logout</button>
+    </form>
+  {{/if}}
+  <h1>Real-Time Productos</h1>
+  <!-- Formulario para agregar nuevos productos -->
+  <form id="productForm">
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title"><br>
+    <label for="description">Description:</label><br>
+    <input type="text" id="description" name="description"><br>
+    <label for="code">Code:</label><br>
+    <input type="text" id="code" name="code"><br>
+    <label for="price">Price:</label><br>
+    <input type="number" id="price" name="price"><br>
+    <label for="stock">Stock:</label><br>
+    <input type="number" id="stock" name="stock"><br>
+    <label for="category">Category:</label><br>
+    <input type="text" id="category" name="category"><br>
+    <label for="thumbnails">Thumbnails:</label><br>
+    <input type="text" id="thumbnails" name="thumbnails"><br>
+    <input type="hidden" id="owner" name="owner" value="{{user.email}}">
+    <input type="submit" value="Agregar producto">
+  </form>
+  <div id="productList">
+    {{#each products}}
+      <div class="product-card">
+        <h3>{{#if this.title}}{{this.title}}{{else}}No Title{{/if}}</h3>
+        {{#if this.thumbnails}}
+          {{#each this.thumbnails}}
+            {{#if @first}}
+              <img src="{{this}}" alt="{{../this.title}} image">
+            {{/if}}
+          {{/each}}
+        {{/if}}
+        {{#if this.description}}
+          <p>{{this.description}}</p>
+        {{/if}}
+        {{#if this.price}}
+          <p>Price: ${{this.price}}</p>
+        {{/if}}
+        {{#if this.stock}}
+          <p>Stock: {{this.stock}}</p>
+        {{/if}}
+      </div>
+    {{/each}}
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+// Solicitar los productos actuales cuando se carga la página
+fetch('/api/products')
+  .then(response => {
+    if (!response || !response.ok) {
+      throw new Error(`HTTP error! status: ${response ? response.status : 'response is undefined'}`);
+    }
+    return response.json();
+  })
+  .then(products => {
+    updateProductList(products.payload);
+  })
+  .catch(e => {
+    console.error('Error al obtener productos:', e);
+  });
+
+// Escucha el evento 'updateProducts' y actualiza la lista de productos
+socket.on('updateProducts', (products) => {
+  updateProductList(products.payload);
+});
+
+ // Actualiza la lista de productos en la página
+function updateProductList(products) {
+  const productList = document.getElementById('productList');
+  productList.innerHTML = '';
+
+  if (Array.isArray(products)) {
+    products.forEach((product) => {
+      const productCard = document.createElement('div');
+      productCard.className = 'product-card';
+      productCard.innerHTML = `
+        <h3>${product.title || 'No Title'}</h3>
+        ${product.thumbnails ? `<img src="${product.thumbnails[0]}" alt="${product.title} image">` : ''}
+        ${product.description ? `<p>${product.description}</p>` : ''}
+        ${product.price ? `<p>Price: $${product.price}</p>` : ''}
+        ${product.stock ? `<p>Stock: ${product.stock}</p>` : ''}
+        ${product.owner ? `<p>Owner: ${product.owner}</p>` : ''}
+      `;
+      productList.appendChild(productCard);
+    });
+  } else {
+    console.error('Error: products is not an array:', products);
+  }
+}
+
+    // Evento de escucha para el formulario de productos
+    document.getElementById('productForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const productData = {
+        title: event.target.title.value,
+        description: event.target.description.value,
+        code: event.target.code.value,
+        price: event.target.price.value,
+        stock: event.target.stock.value,
+        category: event.target.category.value,
+        owner: event.target.owner.value,
+        thumbnails: event.target.thumbnails.value.split(','),
+      };
+
+      socket.emit('newProduct', productData);
+    });
+  </script>
+</body>
+</html>

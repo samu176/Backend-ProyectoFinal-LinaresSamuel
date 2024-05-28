@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito</title>
+</head>
+<body>
+  <h1>Carrito</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre del producto</th>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Cantidad</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each cart.products}}
+        <tr>
+          <td>{{this.productId.title}}</td>
+          <td>{{this.productId.description}}</td>
+          <td>{{this.productId.price}}</td>
+          <td>{{this.quantity}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  <form action="/cart/{{cart._id}}/purchase" method="post">
+    <button type="submit">Finalizar compra</button>
+  </form>
+</body>
+</html>

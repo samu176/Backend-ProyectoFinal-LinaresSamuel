@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos</title>
+  <style>
+    .product-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px;
+      width: 300px;
+      display: inline-block;
+    }
+    .product-card img {
+      max-width: 100%;
+      max-height: 200px;
+    }
+  </style>
+</head>
+<body>
+  {{#if user}}
+    <h2>Bienvenido, {{user.first_name}} {{user.last_name}}!</h2>
+    <p>Email: {{user.email}}</p>
+    <p>Edad: {{user.age}}</p>
+    <p>Rol: {{user.role}}</p>
+    <!-- Verificar el cartId -->
+    <p>Cart ID: {{cartId}}</p>
+    <!-- Enlace al carrito -->
+    <a href="/cart">Ver mi carrito</a>
+    <!-- Formulario de logout -->
+    <form action="/logout" method="post">
+      <button type="submit">Logout</button>
+    </form>
+  {{/if}}
+  <h1>Productos</h1>
+  {{log products}}
+  {{#each products}}
+    <div class="product-card">
+      <h3>{{#if this.title}}{{this.title}}{{else}}No Title{{/if}}</h3>
+      {{#if this.thumbnails}}
+        {{#each this.thumbnails}}
+          {{#if @first}}
+            <img src="{{this}}" alt="{{../this.title}} image">
+          {{/if}}
+        {{/each}}
+      {{/if}}
+      {{#if this.description}}
+        <p>{{this.description}}</p>
+      {{/if}}
+      {{#if this.price}}
+        <p>Price: ${{this.price}}</p>
+      {{/if}}
+      {{#if this.stock}}
+        <p>Stock: {{this.stock}}</p>
+      {{/if}}
+      <form action="/cart/product/{{this.id}}" method="post">
+        <input type="hidden" name="quantity" value="1">
+        <!-- Utilizar el cartId dinámico -->
+        <input type="hidden" name="cartId" value="{{../cartId}}">
+        <button type="submit">Agregar al carrito</button>
+      </form>
+    </div>
+  {{/each}}
+  <div>
+    {{#if hasNextPage}}
+      <a href="{{nextLink}}">Siguiente página</a>
+    {{/if}}
+    {{#if hasPrevPage}}
+      <a href="{{prevLink}}">Página anterior</a>
+    {{/if}}
+  </div>
+</body>
+</html>
