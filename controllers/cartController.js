@@ -3,6 +3,9 @@ const ProductService = require('../services/productService');
 const Ticket = require('../models/ticketModel');
 const productController = require('./productController');
 const User = require('../models/userModel');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const cors = require('cors');
+const morgan = require('morgan');
 
 // Crear un nuevo carrito
 const createCart = async () => {
@@ -121,4 +124,38 @@ const finalizePurchase = async (cartId, userId) => {
   }
 };
 
-module.exports = { createCart, getCartById, addProductToCart, removeProduct, updateCart, updateProductQuantity, clearCart, finalizePurchase };
+// Crear una sesión de pago con Stripe
+const createStripeSession = async (cartId) => {
+  try {
+    const cart = await CartService.getCartById(cartId);
+    if (!cart) {
+      throw new Error('Carrito no encontrado');
+    }
+
+    const line_items = cart.products.map(product => ({
+      price_data: {
+        currency: 'usd',
+        product_data: {
+          name: product.productId.title,
+          description: product.productId.description,
+        },
+        unit_amount: product.productId.price * 100,
+      },
+      quantity: product.quantity,
+    }));
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items,
+      mode: 'payment',
+      success_url: `${process.env.BASE_URL}/cart/${cartId}/success`,
+      cancel_url: `${process.env.BASE_URL}/cart/${cartId}`,
+    });
+
+    return session.id;
+  } catch (error) {
+    throw new Error('Error al crear la sesión de Stripe');
+  }
+};
+
+module.exports = { createCart, getCartById, addProductToCart, removeProduct, updateCart, updateProductQuantity, clearCart, finalizePurchase, createStripeSession };

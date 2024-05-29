@@ -23,7 +23,10 @@ router.get('/', async (req, res) => {
 
   try {
     const cart = await cartController.getCartById(cartId);
-    res.render('carts', { cart });
+    res.render('carts', { 
+      cart: cart,
+      STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY 
+    });
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener el carrito.' });
   }
@@ -94,12 +97,23 @@ router.put('/:cid/products/:pid', async (req, res) => {
   }
 });
 
+// Crear una sesión de pago con Stripe
+router.post('/:cid/stripe-session', async (req, res) => {
+  const cartId = req.params.cid;
+  try {
+    const sessionId = await cartController.createStripeSession(cartId);
+    res.json({ sessionId });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Finalizar la compra del carrito
 router.post('/:cid/purchase', async (req, res) => {
   const cartId = req.params.cid;
   try {
-    const ticketId = await cartController.finalizePurchase(cartId, req.user.id);
-    res.redirect(`/cart/${cartId}/ticket/${ticketId}`);
+    const sessionId = await cartController.createStripeSession(cartId);
+    res.json({ sessionId });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -111,6 +125,18 @@ router.get('/:cid/ticket/:tid', async (req, res) => {
   try {
     const ticket = await Ticket.findById(ticketId);
     res.render('ticket', { ticket });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Ruta para manejar el éxito de la compra
+router.get('/:id/success', async (req, res) => {
+  try {
+    const cartId = req.params.id;
+    const ticket = await Ticket.findOne({ purchaser: req.user.email });
+    await cartController.clearCart(cartId); // Limpia el carrito después de una compra exitosa
+    res.render('carts', { cart: null, ticket, message: 'Pago exitoso' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

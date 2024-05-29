@@ -7,6 +7,14 @@
 </head>
 <body>
   <h1>Carrito</h1>
+    {{#if ticket}}
+    <h2>{{message}}</h2>
+    <h2>Ticket</h2>
+    <p>Código: {{ticket.code}}</p>
+    <p>Fecha de compra: {{ticket.purchase_datetime}}</p>
+    <p>Monto total: {{ticket.amount}}</p>
+    <p>Comprador: {{ticket.purchaser}}</p>
+  {{/if}}
   <table>
     <thead>
       <tr>
@@ -30,5 +38,24 @@
   <form action="/cart/{{cart._id}}/purchase" method="post">
     <button type="submit">Finalizar compra</button>
   </form>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  const stripe = Stripe('{{STRIPE_PUBLIC_KEY}}');
+
+  document.querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const response = await fetch(`/cart/{{cart._id}}/stripe-session`, { method: 'POST' });
+    const { sessionId } = await response.json();
+
+    const { error } = await stripe.redirectToCheckout({ sessionId });
+
+    if (error) {
+      console.error(error);
+    }
+  });
+</script>
+
 </body>
 </html>

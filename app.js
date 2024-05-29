@@ -13,6 +13,8 @@ const passport = require('./config/passport');
 const productController = require('./controllers/productController');
 const setupRoutes = require('./router');
 const socketHandlers = require('./utils/socketHandlers');
+const cors = require('cors');
+const morgan = require('morgan');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -36,6 +38,10 @@ app.set('view engine', 'handlebars');
 Handlebars.registerHelper('log', function(something) {
   console.log(something);
 });
+
+// Configuración de cors y morgan
+app.use(cors());
+app.use(morgan('dev'));
 
 // Configuración de archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));

@@ -9,5 +9,9 @@ module.exports = {
   sendMessageEmailPassword: process.env.SEND_MESSAGE_EMAIL_PASSWORD,
   twilioAccountSid: process.env.TWILIO_ACCOUNT_SID,
   twilioAuthToken: process.env.TWILIO_AUTH_TOKEN,
-  twilioPhoneNumber: process.env.TWILIO_PHONE_NUMBER
+  twilioPhoneNumber: process.env.TWILIO_PHONE_NUMBER,
+  nodeEnv: process.env.NODE_ENV,
+  stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+  stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
+  baseUrl: process.env.BASE_URL,
 };
