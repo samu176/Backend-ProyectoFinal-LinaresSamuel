@@ -78,8 +78,7 @@ class ProductService {
       }
 
       // Actualizar el stock del producto
-      product.stock = newStock;
-      await product.save();
+      const updatedProduct = await ProductRepository.updateProduct(productId, { stock: newStock });
       return true;
     } catch (error) {
       throw new Error('Error al actualizar la cantidad de un producto en el carrito:' + error.message);

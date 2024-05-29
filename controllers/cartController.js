@@ -96,8 +96,7 @@ const finalizePurchase = async (cartId, userId) => {
         remainingProducts.push(product);
         continue;
       }
-      dbProduct.stock -= product.quantity;
-      await ProductService.updateProduct(dbProduct.id, dbProduct);
+      await ProductService.updateStock(dbProduct.id, dbProduct.stock - product.quantity);
       ticketProducts.push({
         product: dbProduct.id,
         quantity: product.quantity,
