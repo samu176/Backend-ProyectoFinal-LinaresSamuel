@@ -14,4 +14,9 @@ module.exports = function(app) {
   app.use('/messages', messageRoutes);
   app.use('/', authRoutes);
   app.use('/realtime', realtimeRoutes);
+
+  // Redirección de la ruta raíz a /home
+  app.get('/', (req, res) => {
+    res.redirect('/home');
+  });
 };
