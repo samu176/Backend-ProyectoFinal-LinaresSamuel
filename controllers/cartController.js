@@ -6,6 +6,7 @@ const User = require('../models/userModel');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cors = require('cors');
 const morgan = require('morgan');
+const BASE_URL = process.env.BASE_URL.endsWith('/') ? process.env.BASE_URL.slice(0, -1) : process.env.BASE_URL;
 
 // Crear un nuevo carrito
 const createCart = async () => {
@@ -148,8 +149,8 @@ const createStripeSession = async (cartId) => {
       payment_method_types: ['card'],
       line_items,
       mode: 'payment',
-      success_url: `${process.env.BASE_URL}/cart/${cartId}/success`,
-      cancel_url: `${process.env.BASE_URL}/cart/${cartId}`,
+      success_url: `${BASE_URL}/cart/${cartId}/success`,
+      cancel_url: `${BASE_URL}/cart/${cartId}`,
     });
 
     return session.id;
