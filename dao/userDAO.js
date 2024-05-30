@@ -43,10 +43,10 @@ class UserDAO {
     return user ? this.toDTO(user) : null;
   }
 
+ // Eliminar usuario
   async deleteUser(id) {
-    const deletedUser = await User.findByIdAndDelete(id);
-    return deletedUser ? this.toDTO(deletedUser) : null;
-  }
+  return User.deleteOne({ _id: id });
+}
 
   async findUserByGithubId(githubId) {
     const user = await User.findOne({ githubId });

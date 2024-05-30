@@ -52,6 +52,16 @@ async function getAllUsers(req, res) {
   }
 }
 
+// Función para eliminar un usuario
+async function deleteUser(req, res) {
+  try {
+    await userService.deleteUser(req.params.id);
+    res.redirect('/users');
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   createUser,
   findUser,
@@ -59,4 +69,5 @@ module.exports = {
   findUserByGithubId,
   changeUserRole,
   getAllUsers,
+  deleteUser,
 };

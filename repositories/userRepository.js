@@ -36,11 +36,10 @@ async getAllUsers() {
     return updatedUser;
   }
 
-  // Método para eliminar un usuario
+ // Método para eliminar un usuario
   async deleteUser(id) {
-    // Se usa el método deleteUser del DAO para eliminar el usuario
-    await UserDAO.deleteUser(id);
-  }
+    return UserDAO.deleteUser(id);
+}
 
   // Método para encontrar un usuario por su ID de Github
   async findUserByGithubId(githubId) {

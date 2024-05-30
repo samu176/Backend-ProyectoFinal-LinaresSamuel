@@ -88,6 +88,11 @@ async getAllUsers() {
   return this.userRepository.getAllUsers();
 }
 
+// Eliminar un usuario
+async deleteUser(id) {
+  return this.userRepository.deleteUser(id);
+}
+
 // Método para cambiar el rol de un usuario
 async changeUserRole(userId, newRole) {
   try {

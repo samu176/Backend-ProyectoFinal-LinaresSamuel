@@ -14,6 +14,9 @@ router.get('/mockingproducts', (req, res) => {
   res.json(products);
 });
 
+// Ruta para eliminar un usuario
+router.post('/users/delete/:id', userController.deleteUser);
+
 // Ruta para obtener detalles de un producto por su id
 router.get('/products/:pid', productController.getProductById);
 
