@@ -10,6 +10,11 @@ function ensureAuthenticated(req, res, next) {
       return res.redirect('/home'); // redirige a los usuarios que no son rol "usuario" a la página de inicio
     }
 
+    // Verificar si el usuario es administrador para la ruta de usuarios
+    if (req.path === '/users' && req.user.role !== 'admin') {
+      return res.redirect('/home'); // redirige a los usuarios que no son rol "admin" a la página de inicio
+    }
+
     return next();
   } else {
     res.redirect('/login');

@@ -11,6 +11,7 @@ const config = require('./config/config');
 const ensureAuthenticated = require('./middleware/authMiddleware');
 const passport = require('./config/passport');
 const productController = require('./controllers/productController');
+const userController = require('./controllers/userController');
 const setupRoutes = require('./router');
 const socketHandlers = require('./utils/socketHandlers');
 const cors = require('cors');
@@ -79,6 +80,9 @@ setupRoutes(app);
 app.get('/chat', ensureAuthenticated, (req, res) => {
   res.render('chat');
 });
+
+// Ruta para la vista de usuarios
+app.get('/users', ensureAuthenticated, userController.getAllUsers);
 
 // Manejo de mensajes de chat con Socket.IO
 socketHandlers(io);

@@ -83,6 +83,11 @@ async findUserByGithubId(githubId) {
   return user;
 }
 
+// Obtener todos los usuarios
+async getAllUsers() {
+  return this.userRepository.getAllUsers();
+}
+
 // Método para cambiar el rol de un usuario
 async changeUserRole(userId, newRole) {
   try {

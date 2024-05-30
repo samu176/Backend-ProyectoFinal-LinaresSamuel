@@ -26,6 +26,9 @@ router.put('/products/:pid', ensureAuthenticated, productController.updateProduc
 // Ruta para eliminar un producto por su id
 router.delete('/products/:pid', ensureAuthenticated, productController.deleteProduct);
 
+// Ruta para obtener todos los usuarios
+router.get('/admin/users', ensureAuthenticated, userController.getAllUsers);
+
 // Ruta para obtener la información del usuario actual
 router.get('/sessions/current', (req, res) => {
   // Verifica si el usuario está autenticado

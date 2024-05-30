@@ -14,6 +14,12 @@ class UserDAO {
     return this.toDTO(user);
   }
 
+  // Obtener todos los usuarios
+  async getAllUsers() {
+  const users = await User.find({});
+  return users.map(user => this.toDTO(user));
+}
+
   async createUser(user) {
     user.role = user.role || 'usuario';
     const newUser = new User(user);

@@ -1,5 +1,6 @@
 const UserRepository = require('../repositories/userRepository');
 const UserService = require('../services/userService');
+const userService = new UserService(); // <-- Añadido
 
 async function createUser(first_name, last_name, email, age, password, githubId = null, cartId = null) {
   // Agrega un campo de cart al objeto del usuario si se proporciona cartId
@@ -33,8 +34,19 @@ async function changeUserRole(req, res) {
   try {
     const userId = req.params.uid;
     const newRole = req.body.role;
-    const user = await UserService.changeUserRole(userId, newRole);
+    const user = await userService.changeUserRole(userId, newRole);
     res.json({ status: 'success', payload: user });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+}
+
+// Función para obtener todos los usuarios
+async function getAllUsers(req, res) {
+  try {
+    // Usamos la instancia de UserService que creamos
+    const users = await userService.getAllUsers(); // <-- Modificado
+    res.render('users', { users });
   } catch (error) {
     res.status(500).json({ status: 'error', message: error.message });
   }
@@ -46,4 +58,5 @@ module.exports = {
   findUserById,
   findUserByGithubId,
   changeUserRole,
+  getAllUsers,
 };

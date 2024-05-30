@@ -15,6 +15,11 @@ class UserRepository {
     return user;
   }
 
+ // Obtener todos los usuarios
+async getAllUsers() {
+  return UserDAO.getAllUsers();
+}
+
   // Método para crear un usuario
   async createUser(user) {
     // Si no se especifica un rol, se asigna 'usuario' por defecto
