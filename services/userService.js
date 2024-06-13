@@ -63,7 +63,7 @@ async findUserByGithubId(githubId) {
   // Usar el método findUserByGithubId de UserRepository para obtener el usuario
   const user = await this.userRepository.findUserByGithubId(githubId);
   if (!user) {
-    return null; // Devolvemos null en lugar de lanzar un error
+    return null;
     }
 
   // Si todo está bien, devolver el usuario
@@ -95,17 +95,12 @@ async deleteUser(id) {
 
 // Método para cambiar el rol de un usuario
 async changeUserRole(userId, newRole) {
-  try {
-    const user = await this.userRepository.getUserById(userId);
-    if (!user) {
-      throw new Error('User not found');
-    }
-    user.role = newRole;
-    await user.save();
-    return user;
-  } catch (error) {
-    throw new Error('ChangeUserRoleError: ' + error.message);
+  const user = await this.userRepository.getUserById(userId);
+  if (!user) {
+    throw new Error('Usuario no encontrado');
   }
+  user.role = newRole;
+  return this.userRepository.updateUser(userId, user);
 }
 
 }

@@ -1,6 +1,6 @@
 const UserRepository = require('../repositories/userRepository');
 const UserService = require('../services/userService');
-const userService = new UserService(); // <-- Añadido
+const userService = new UserService();
 
 async function createUser(first_name, last_name, email, age, password, githubId = null, cartId = null) {
   // Agrega un campo de cart al objeto del usuario si se proporciona cartId
@@ -32,7 +32,7 @@ async function findUserByGithubId(githubId) {
 // Función para cambiar el rol de un usuario
 async function changeUserRole(req, res) {
   try {
-    const userId = req.params.uid;
+    const userId = req.params.id;
     const newRole = req.body.role;
     const user = await userService.changeUserRole(userId, newRole);
     res.json({ status: 'success', payload: user });
@@ -45,7 +45,7 @@ async function changeUserRole(req, res) {
 async function getAllUsers(req, res) {
   try {
     // Usamos la instancia de UserService que creamos
-    const users = await userService.getAllUsers(); // <-- Modificado
+    const users = await userService.getAllUsers();
     res.render('users', { users });
   } catch (error) {
     res.status(500).json({ status: 'error', message: error.message });
